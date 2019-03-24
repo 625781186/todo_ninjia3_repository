@@ -29,40 +29,59 @@
           open-all
         >
           <!-- <draggable v-model="items"  @start="drag = true" @end="drag = false"> -->
-          <!-- <template v-slot:prepend="{ item }">
-              <v-icon v-if="item.children" v-text="`${item.id === 1 ? 'folder' : 'folder_open'}`"></v-icon>
-          </template>-->
+          <!--<template v-slot:prepend="{ item }">-->
+          <!--<v-icon v-if="item.children" v-text="`${item.id === 1 ? 'folder' : 'folder_open'}`"></v-icon>-->
+          <!--</template>-->
           <!-- </draggable> -->
 
-          <template slot="label" slot-scope="{ item }">
-            <dragdropslot
-              :class="['tree-item', (over && over.id === item.id ? over.mode : '')]"
-              :key="item.id"
-              :item="item"
-              @drag="drag"
-              @enter="enter"
-              @leave="leave"
-              @hover="hover"
-              @drop="drop"
-            >
-              <icon :config="item" size="17"/>
-              <span v-html="item.text"></span>
-            </dragdropslot>
-          </template>
+          <!--<template slot="label" slot-scope="{ item }">-->
+          <!--<dragdropslot-->
+          <!--:class="['tree-item', (over && over.id === item.id ? over.mode : '')]"-->
+          <!--:key="item.id"-->
+          <!--:item="item"-->
+          <!--@drag="drag"-->
+          <!--@enter="enter"-->
+          <!--@leave="leave"-->
+          <!--@hover="hover"-->
+          <!--@drop="drop"-->
+          <!--&gt;-->
+          <!--<icon :config="item" size="17"/>-->
+          <!--<span v-html="item.text"></span>-->
+          <!--</dragdropslot>-->
+          <!--</template>-->
         </v-treeview>
+
+        <template>
+          <div>
+            <div style="overflow: hidden; clear: both">
+              <Dustbin/>
+            </div>
+            <div style="overflow: hidden; clear: both">
+              <Box name="Glass"/>
+              <Box name="Banana"/>
+              <Box name="Paper"/>
+            </div>
+          </div>
+        </template>
       </v-card-text>
     </v-card>
   </div>
 </template>
 
 <script>
-import draggable from "vuedraggable"
-import dragdropslot from "./Navbar-tree-drop.vue"
-export default {
-  components: { draggable , dragdropslot},
+  import draggable from "vuedraggable"
+  import dragdropslot from "./Navbar-tree-drop.vue"
+  import Dustbin from './Dustbin'
+  import Box from './Box'
+  import {DragDropContext} from 'vue-react-dnd'
+  import HTML5Backend from 'react-dnd-html5-backend'
 
-  data() {
-    return {
+  export default {
+    components: {draggable, dragdropslot, Dustbin, Box},
+
+    mixins: [DragDropContext(HTML5Backend)],
+    data() {
+      return {
         items: [
           {
             id: 1,
@@ -131,78 +150,86 @@ export default {
         ],
         open: [1, 2],
         search: null,
-        caseSensitive: false
-    };
-  },
-  methods: {
-    setEvent() {},
-    drag(dragging) {
-      this.dragging = dragging;
+        caseSensitive: false,
+        over: null
+      };
     },
-    enter(dragging, target) {
-      this.expanded.push(target.id);
-    },
-    leave(dragging, target) {
-      this.over = null;
-    },
-    hover(dragging, target) {
-      let parent = this.findParent(dragging.id, this.tree);
-      if (target.id !== parent.id) {
-        this.over = { id: target.id, mode: "append" };
+    methods: {
+      setEvent() {
       }
-    },
-    drop(dragging, target) {
-      let parent = this.findParent(dragging.id, this.tree);
-      if (dragging.id !== target.id && target.id !== parent.id) {
-        let items = _.cloneDeep(this.tree);
-        // get dragging item (local copy!)
-        let item = this.findItem(dragging.id, items);
-        // remove from parent
-        let draggingParent = this.findParent(item.id, items);
-        let draggingIdx = draggingParent.children.findIndex(
-          sibling => sibling === item
-        );
-        draggingParent.children.splice(draggingIdx, 1);
-
-        // find target (local copy!)
-        target = this.findItem(target.id, items);
-        // add to target (local copy!)
-        target.children.push(item);
-
-        // sort
-        if (this.config.options.ddAppendOnly) {
-          target.children.sort((a, b) =>
-            a["text"].localeCompare(b["text"], undefined, {
-              sensitivity: "base"
-            })
+      ,
+      drag(dragging) {
+        this.dragging = dragging;
+      }
+      ,
+      enter(dragging, target) {
+        this.expanded.push(target.id);
+      }
+      ,
+      leave(dragging, target) {
+        this.over = null;
+      }
+      ,
+      hover(dragging, target) {
+        let parent = this.findParent(dragging.id, this.tree);
+        if (target.id !== parent.id) {
+          this.over = {id: target.id, mode: "append"};
+        }
+      }
+      ,
+      drop(dragging, target) {
+        let parent = this.findParent(dragging.id, this.tree);
+        if (dragging.id !== target.id && target.id !== parent.id) {
+          let items = _.cloneDeep(this.tree);
+          // get dragging item (local copy!)
+          let item = this.findItem(dragging.id, items);
+          // remove from parent
+          let draggingParent = this.findParent(item.id, items);
+          let draggingIdx = draggingParent.children.findIndex(
+            sibling => sibling === item
           );
-        }
+          draggingParent.children.splice(draggingIdx, 1);
 
-        // expand target
-        if (this.expanded.indexOf(target.id) === -1) {
-          this.expanded.push(target.id);
+          // find target (local copy!)
+          target = this.findItem(target.id, items);
+          // add to target (local copy!)
+          target.children.push(item);
+
+          // sort
+          if (this.config.options.ddAppendOnly) {
+            target.children.sort((a, b) =>
+              a["text"].localeCompare(b["text"], undefined, {
+                sensitivity: "base"
+              })
+            );
+          }
+
+          // expand target
+          if (this.expanded.indexOf(target.id) === -1) {
+            this.expanded.push(target.id);
+          }
         }
+        this.over = null;
       }
-      this.over = null;
-    }
-  },
-  computed: {
-    filter() {
-      return this.caseSensitive
-        ? (item, search, textKey) => item[textKey].indexOf(search) > -1
-        : undefined;
+    },
+    computed: {
+      filter() {
+        return this.caseSensitive
+          ? (item, search, textKey) => item[textKey].indexOf(search) > -1
+          : undefined;
+      }
     }
   }
-};
+  ;
 </script>
 
 <style>
-.v-window {
-  height: 100%;
-  padding-bottom: 40px;
-  overflow: auto;
-  box-sizing: border-box;
-}
+  .v-window {
+    height: 100%;
+    padding-bottom: 40px;
+    overflow: auto;
+    box-sizing: border-box;
+  }
 </style>
 
 
