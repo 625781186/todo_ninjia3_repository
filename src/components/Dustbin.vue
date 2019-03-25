@@ -1,56 +1,64 @@
-
 <template>
-  <div class="box" v-dragSource v-bind:class="{dragging: isDragging}">{{ name }}</div>
+  <div class="dustbin" v-dropTarget v-bind:class="{active: isActive, canDrop: !isActive && canDrop }">
+    {{ text }}
+  </div>
 </template>
 
 <script>
-import { DragSource } from 'vue-react-dnd'
-import ItemTypes from './ItemTypes'
+import ItemsTypes from './ItemTypes'
+import { DropTarget } from 'vue-react-dnd'
 export default {
-  name: 'Box',
-  props: ['name'],
-  mixins: [DragSource],
+  name: 'Dustbin',
+  mixins: [DropTarget],
   data () {
     return {
-      isDragging: false
+      isOver: false,
+      canDrop: false
     }
   },
-  dragSource: {
+  computed: {
+    isActive () {
+      return this.canDrop && this.isOver
+    },
+    text () {
+      return this.isActive ? 'Release to drop' : 'Drag a box here'
+    }
+  },
+  dropTarget: {
     type () {
-      return ItemTypes.BOX
+      return ItemsTypes.BOX
     },
     specs: {
-      beginDrag () {
-        return {
-          name: this.name
-        }
-      },
-      endDrag (monitor) {
-        const item = monitor.getItem()
-        const dropResult = monitor.getDropResult()
-        if (dropResult) {
-          alert('You dropped ' + item.name + ' into ' + dropResult.name + '!')
-        }
+      drop () {
+        return { name: 'Dustbin' }
       }
     },
     collect (connect, monitor) {
-      this.isDragging = monitor.isDragging()
+      this.isOver = monitor.isOver()
+      this.canDrop = monitor.canDrop()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.box {
-    border: 1px solid gray;
-    background-color: white;
-    padding: 0.5rem 1rem;
+.dustbin {
+    height: 12rem;
+    width: 12rem;
     margin-right: 1.5rem;
     margin-bottom: 1.5rem;
-    cursor: move;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1rem;
+    line-height: normal;
     float: left;
-    &.dragging {
-        opacity: 0.4;
+    background-color: #222;
+    &.active {
+        background-color: darkgreen;
+    }
+    &.canDrop {
+        background-color: darkkhaki;
     }
 }
 </style>

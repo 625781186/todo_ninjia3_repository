@@ -30,31 +30,31 @@
         >
           <!-- <draggable v-model="items"  @start="drag = true" @end="drag = false"> -->
           <!--<template v-slot:prepend="{ item }">-->
-          <!--<v-icon v-if="item.children" v-text="`${item.id === 1 ? 'folder' : 'folder_open'}`"></v-icon>-->
+            <!--<v-icon v-if="item.children" v-text="`${item.id === 1 ? 'folder' : 'folder_open'}`"></v-icon>-->
           <!--</template>-->
           <!-- </draggable> -->
 
-          <!--<template slot="label" slot-scope="{ item }">-->
-          <!--<dragdropslot-->
-          <!--:class="['tree-item', (over && over.id === item.id ? over.mode : '')]"-->
-          <!--:key="item.id"-->
-          <!--:item="item"-->
-          <!--@drag="drag"-->
-          <!--@enter="enter"-->
-          <!--@leave="leave"-->
-          <!--@hover="hover"-->
-          <!--@drop="drop"-->
-          <!--&gt;-->
+          <template slot="label" slot-scope="{ item }">
+          <dragdropslot
+          :class="['tree-item', (over && over.id === item.id ? over.mode : '')]"
+          :key="item.id"
+          :item="item"
+          @drag="drag"
+          @enter="enter"
+          @leave="leave"
+          @hover="hover"
+          @drop="drop"
+          >
           <!--<icon :config="item" size="17"/>-->
-          <!--<span v-html="item.text"></span>-->
-          <!--</dragdropslot>-->
-          <!--</template>-->
+          <span v-html="item.name"></span>
+          </dragdropslot>
+          </template>
         </v-treeview>
 
         <template>
           <div>
             <div style="overflow: hidden; clear: both">
-              <Dustbin/>
+              <Dustbin></Dustbin>
             </div>
             <div style="overflow: hidden; clear: both">
               <Box name="Glass"/>
@@ -85,66 +85,46 @@
         items: [
           {
             id: 1,
+            parent: null,
             name: "Vuetify Human Resources",
             children: [
               {
-                id: 2,
+                id: 11,
+                parent: 1,
                 name: "Core team",
                 children: [
                   {
-                    id: 201,
+                    id: 111,
+                    parent: 11,
                     name: "John"
                   },
                   {
-                    id: 202,
+                    id: 112,
+                    parent: 11,
                     name: "Kael"
                   },
-                  {
-                    id: 203,
-                    name: "Nekosaur"
-                  },
-                  {
-                    id: 204,
-                    name: "Jacek"
-                  },
-                  {
-                    id: 205,
-                    name: "Andrew"
-                  }
-                ]
+
+                ],
+
               },
               {
-                id: 3,
+                id: 12,
+                parent: 1,
                 name: "Administrators",
                 children: [
                   {
-                    id: 301,
+                    id: 121,
+                    parent: 12,
                     name: "Ranee"
                   },
                   {
-                    id: 302,
+                    id: 122,
+                    parent: 12,
                     name: "Rachel"
                   }
                 ]
               },
-              {
-                id: 4,
-                name: "Contributors",
-                children: [
-                  {
-                    id: 401,
-                    name: "Phlow"
-                  },
-                  {
-                    id: 402,
-                    name: "Brandon"
-                  },
-                  {
-                    id: 403,
-                    name: "Sean"
-                  }
-                ]
-              }
+
             ]
           }
         ],
@@ -163,7 +143,9 @@
       }
       ,
       enter(dragging, target) {
-        this.expanded.push(target.id);
+        // this.expanded.push(target.id);
+        console.log("target.id:",target.id)
+        console.log("target",target)
       }
       ,
       leave(dragging, target) {
@@ -171,13 +153,15 @@
       }
       ,
       hover(dragging, target) {
-        let parent = this.findParent(dragging.id, this.tree);
-        if (target.id !== parent.id) {
-          this.over = {id: target.id, mode: "append"};
-        }
+        // let parent = this.findParent(dragging.id, this.tree);
+        // if (target.id !== parent.id) {
+        //   this.over = {id: target.id, mode: "append"};
+        // }
       }
       ,
       drop(dragging, target) {
+        this.findParent(target.id)
+        /*
         let parent = this.findParent(dragging.id, this.tree);
         if (dragging.id !== target.id && target.id !== parent.id) {
           let items = _.cloneDeep(this.tree);
@@ -210,8 +194,23 @@
           }
         }
         this.over = null;
+        */
+       }
+      ,
+      findParent(id){
+        console.log("target.id:",id)
+        // while true:
+        //   null
+        const root = item[0].children
+        const L = root.length
+        for(let i=0;i<L;i++){
+          console.log(`len${L}-${i}`,"drop:",root[i])
+        }
       }
+      ,
+
     },
+
     computed: {
       filter() {
         return this.caseSensitive
@@ -219,8 +218,7 @@
           : undefined;
       }
     }
-  }
-  ;
+  };
 </script>
 
 <style>
