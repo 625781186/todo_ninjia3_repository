@@ -17,25 +17,33 @@
     </v-toolbar>
 
     <!-- Left Drawer -->
-    <v-navigation-drawer ref="drawer" app :width="navigation.width" v-model="navigation.shown" style="height:100%;overflow:hidden">
+    <v-navigation-drawer ref="drawer" app :width="navigation.width" v-model="navigation.shown"
+                         style="height:100%;overflow:hidden">
       <!-- drawer toolbar -->
       <v-toolbar color="red" grid-list-md text-xs-center fixed>
         <v-flex xs6>
-        <v-toolbar-title class="headline padding-bottom:0">
-          <span>A</span>
-          <span class="font-weight-light">rticle</span>
-        </v-toolbar-title>
+          <v-toolbar-title class="headline padding-bottom:0">
+            <span>A</span>
+            <span class="font-weight-light">rticle</span>
+          </v-toolbar-title>
         </v-flex>
         <!-- search btn -->
         <v-flex xs6>
-        <v-text-field
-          clearable
-          name="search"
-          label="Search"
-          color="black"
-          class="red"
-          @click:append="console.log('todo-搜索文章')"
-        >{}></v-text-field>
+<!--style="padding-top: 0"-->
+          <v-text-field
+            clearable
+
+            name="search"
+            label="Search"
+
+            color="black"
+            class="red pt-0"
+            append-icon="search"
+            hide-details
+            @click:append="console.log('todo-搜索文章')"
+
+          >
+          </v-text-field>
         </v-flex>
       </v-toolbar>
       <!-- tab -->
@@ -45,7 +53,8 @@
         <v-tab :key="1">一键上传</v-tab>
         <!-- tab close btn -->
         <v-spacer></v-spacer>
-        <v-btn fab small flat @click="navigation.shown = !navigation.shown ">
+        <!--<v-btn fab small flat @click="navigation.shown = !navigation.shown ">-->
+        <v-btn fab small flat @click="add">
           <v-icon>close</v-icon>
         </v-btn>
         <!-- tab Item 0 Content -->
@@ -74,86 +83,91 @@
 </template>
 
 <script>
-import Tree from "./Navbar-tree.vue";
-export default {
-  components: { Tree },
-  data() {
-    return {
-      navigation: {
-        tabNumber: 3,
-        shown: false,
-        width: 300,
-        borderSize: 3
-      }
-    };
-  },
-  computed: {
-    direction() {
-      return this.navigation.shown === false ? "Open" : "Closed";
-    }
-  },
-  methods: {
-    // 设置拉伸handel的宽度, 光标样式,颜色
-    setBorderWidth() {
-      let i = this.$refs.drawer.$el.querySelector(
-        ".v-navigation-drawer__border"
-      );
-      i.style.width = this.navigation.borderSize + "px";
-      i.style.cursor = "ew-resize";
-      // i.style.backgroundColor = "red";
+  import Tree from "./Navbar-tree.vue";
+  import {mapState, mapGetters, mapActions} from 'vuex'
+
+  export default {
+    components: {Tree},
+    data() {
+      return {
+        navigation: {
+          tabNumber: 3,
+          shown: false,
+          width: 300,
+          borderSize: 3
+        }
+      };
     },
+    computed: {
 
-    // 鼠标事件
-    setEvents() {
-      const minSize = this.navigation.borderSize;
-      const el = this.$refs.drawer.$el;
-      const drawerBorder = el.querySelector(".v-navigation-drawer__border");
-      const vm = this;
-      const direction = el.classList.contains("v-navigation-drawer--right")
-        ? "right"
-        : "left";
-
-      function resize(e) {
-        document.body.style.cursor = "ew-resize";
-        let f =
-          direction === "right"
-            ? document.body.scrollWidth - e.clientX
-            : e.clientX;
-        el.style.width = f + "px";
+      direction() {
+        return this.navigation.shown === false ? "Open" : "Closed";
       }
+    },
+    methods: {
 
+      ...mapActions(['add']),
+      // 设置拉伸handel的宽度, 光标样式,颜色
+      setBorderWidth() {
+        let i = this.$refs.drawer.$el.querySelector(
+          ".v-navigation-drawer__border"
+        );
+        i.style.width = this.navigation.borderSize + "px";
+        i.style.cursor = "ew-resize";
+        // i.style.backgroundColor = "red";
+      },
 
-      // 按下
-      drawerBorder.addEventListener(
-        "mousedown",
-        e => {
-          if (e.offsetX < minSize) {
-            el.style.transition = "initial";
-            document.addEventListener("mousemove", resize, false);
-          }
-        },
-        false
-      );
-      // 松开
-      document.addEventListener(
-        "mouseup",
-        () => {
-          el.style.transition = "";
-          this.navigation.width = el.style.width;
-          document.body.style.cursor = "";
-          document.removeEventListener("mousemove", resize, false);
-        },
-        false
-      );
+      // 鼠标事件
+      setEvents() {
+        const minSize = this.navigation.borderSize;
+        const el = this.$refs.drawer.$el;
+        const drawerBorder = el.querySelector(".v-navigation-drawer__border");
+        const direction = el.classList.contains("v-navigation-drawer--right")
+          ? "right"
+          : "left";
+
+        function resize(e) {
+          document.body.style.cursor = "ew-resize";
+          let f =
+            direction === "right"
+              ? document.body.scrollWidth - e.clientX
+              : e.clientX;
+          el.style.width = f + "px";
+        }
+
+        // 按下
+        drawerBorder.addEventListener(
+          "mousedown",
+          e => {
+            if (e.offsetX < minSize) {
+              el.style.transition = "initial";
+              document.addEventListener("mousemove", resize, false);
+            }
+          },
+          false
+        );
+        // 松开
+        document.addEventListener(
+          "mouseup",
+          () => {
+            el.style.transition = "";
+            this.navigation.width = el.style.width;
+            document.body.style.cursor = "";
+            document.removeEventListener("mousemove", resize, false);
+          },
+          false
+        );
+      }
+    },
+    mounted() {
+      this.setBorderWidth();
+      this.setEvents();
     }
-  },
-  mounted() {
-    this.setBorderWidth();
-    this.setEvents();
-  }
-};
+  };
 </script>
 
+<style>
 
+</style>
 
 

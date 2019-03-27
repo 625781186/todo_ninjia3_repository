@@ -25,12 +25,14 @@
 // Object.defineProperty(obj,prop,{value:v,writable: true}) => setattr
 // SubClass instanceof BaseClass => isinstance(SubClass,BaseClass)
 
-class JsonTreeItem {
+
+class JsonTreeItem extends Map{
   __getType(obj) {
     return Object.prototype.toString.call(obj)
   }
 
   constructor(parent = null) {
+    super()
     this.mParent = parent
     this.mChilds = []
     this.mType = null
@@ -88,32 +90,29 @@ class JsonTreeItem {
 
   load(value_, parent = null) {
     let rootItem = new JsonTreeItem(parent)
-    rootItem.setKey('root')
-    let jsonType = this.__getType(value_)
+    // rootItem.setKey('root')
+    let value_type = this.__getType(value_)
 
     // # process the key / value pair
-    if (value_ instanceof Object) {
+    if (value_type === "[object Object]") {
 
       for (let key in value_) {
         var v = value_[key]
-        // Object.defineProperty(this, key.toString(), {value: v, writable: true})
-        // if (this.hasOwnProperty("children") && this.children.length > 0) {
+        Object.defineProperty(this, key.toString(), {value: v, writable: true})
+        if (this.hasOwnProperty("children") && this.children.length > 0) {
           var child = this.load(v, rootItem)
-          child.setKey(key)
-          child.setType(this.__getType(v))
-
           rootItem.appendChild(child)
-        // }
+        }
 
       }
     }
     // # process the values in the list
-    else if (value_ instanceof Array) {
+    else if (value_type === "[object Array]") {
 
-      Array.forEach((v, i) => {
+      value_.forEach((v, i) => {
         var child = this.load(v, rootItem)
-        child.setKey(str(i))
-        child.setType(this.__getType(v))
+        // child.setKey(i)
+        // child.setType(this.__getType(v))
         rootItem.appendChild(child)
       });
     }
@@ -134,46 +133,56 @@ class JsonTreeItem {
 
 // "(1,2)"
 // console.log(p.toValue())
-var mRootItem = new JsonTreeItem()
-json = {
-  id: 1,
-  parent: null,
-  name: "Vuetify Human Resources",
-  children: [{
-    id: 11,
-    parent: 1,
-    name: "Core team",
-    children: [
-      {
-        id: 111,
-        parent: 11,
-        name: "John"
-      }, {
-        id: 112,
-        parent: 11,
-        name: "Kael"
-      },
+mRootItem = new JsonTreeItem()
+json =
+  {
+    id: 1,
+    parent:
+      null,
+    name:
+      "Vuetify Human Resources",
+    children:
+      [
+        {
+          id: 11,
+          parent: 1,
+          name: "Core team",
+          children: [
+            {
+              id: 111,
+              parent: 11,
+              name: "John"
+            }, {
+              id: 112,
+              parent: 11,
+              name: "Kael"
+            },
 
-    ],
+          ],
 
-  }, {
-    id: 12,
-    parent: 1,
-    name: "Administrators",
-    children: [{
-      id: 121,
-      parent: 12,
-      name: "Ranee"
-    }, {
-      id: 122,
-      parent: 12,
-      name: "Rachel"
-    }
-    ]
-  },
+        },
+        {
+          id: 12,
+          parent: 1,
+          name: "Administrators",
+          children: [
+            {
+              id: 121,
+              parent: 12,
+              name: "Ranee"
+            },
+            {
+              id: 122,
+              parent: 12,
+              name: "Rachel"
+            }
+          ]
+        },
+      ]
+  }
 
-  ]
-}
 
 mRootItem = mRootItem.load(json)
 console.log(mRootItem)
+
+//1->mRootItem

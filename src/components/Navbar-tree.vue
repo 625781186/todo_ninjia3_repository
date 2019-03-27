@@ -2,8 +2,9 @@
   <!-- tab Item Content -->
   <div>
     <v-card class="mx-auto" style="top:5px;">
-      <!--  -->
+
       <v-sheet class="pa-3 primary lighten-2">
+        /*搜索目录框*/
         <v-text-field
           v-model="search"
           label="Search Company Directory"
@@ -14,11 +15,11 @@
           clearable
           clear-icon="close-circle-outline"
         ></v-text-field>
+        /*匹配大小写*/
         <v-checkbox v-model="caseSensitive" dark hide-details label="Case sensitive search"></v-checkbox>
       </v-sheet>
       <!--  -->
       <v-card-text>
-        <!-- :items="items" -->
         <v-treeview
           :items="items"
           :search="search"
@@ -28,124 +29,104 @@
           hoverable
           open-all
         >
-          <!-- <draggable v-model="items"  @start="drag = true" @end="drag = false"> -->
-          <!--<template v-slot:prepend="{ item }">-->
-            <!--<v-icon v-if="item.children" v-text="`${item.id === 1 ? 'folder' : 'folder_open'}`"></v-icon>-->
-          <!--</template>-->
-          <!-- </draggable> -->
 
+          /*tree item组*/
           <template slot="label" slot-scope="{ item }">
-          <dragdropslot
-          :class="['tree-item', (over && over.id === item.id ? over.mode : '')]"
-          :key="item.id"
-          :item="item"
-          @drag="drag"
-          @enter="enter"
-          @leave="leave"
-          @hover="hover"
-          @drop="drop"
-          >
-          <!--<icon :config="item" size="17"/>-->
-          <span v-html="item.name"></span>
-          </dragdropslot>
+
+            <DragDropSlot
+              :class="['tree-item', (over && over.id === item.id ? over.mode : '')]"
+              :key="item.id"
+              :item="item"
+              @drag="drag"
+              @enter="enter"
+              @leave="leave"
+              @hover="hover"
+              @drop="drop"
+              @click.native="itemClick"
+              @mouseenter.native="mouseEvent(isEnter=true)"
+              @mouseleave.native="mouseEvent(isEnter=false)"
+            >
+              <v-icon v-if="item.children" v-text="`${item.id === 1 ? 'folder' : 'folder_open'}`"></v-icon>
+
+              <span v-html="item.name"></span>
+            </DragDropSlot>
+          </template>
+          /*后置按钮组*/
+          <template slot="prepend" slot-scope="{ item }">
+            <!--<v-btn fab small-->
+            <!--slot="append"-->
+            <!--@click.stop="onAddBtnClick(item)">-->
+            <!--<v-icon >add</v-icon>-->
+            <!--</v-btn>-->
+
+            <!--<v-btn fab small>-->
+            <!--<v-icon>delete</v-icon>-->
+            <!--</v-btn>-->
+            <v-btn-toggle v-model="toggle_none">
+              <v-btn active-class=""  @click.stop="onAddBtnClick(item)">
+                <v-icon>add</v-icon>
+              </v-btn>
+              <v-btn active-class=""  @click.stop="onDelBtnClick(item)">
+                <v-icon >delete</v-icon>
+              </v-btn>
+
+            </v-btn-toggle>
           </template>
         </v-treeview>
 
-        <template>
-          <div>
-            <div style="overflow: hidden; clear: both">
-              <Dustbin></Dustbin>
-            </div>
-            <div style="overflow: hidden; clear: both">
-              <Box name="Glass"/>
-              <Box name="Banana"/>
-              <Box name="Paper"/>
-            </div>
-          </div>
-        </template>
+        <!--/*BOX*/-->
+        <!--<template>-->
+        <!--<div>-->
+        <!--<div style="overflow: hidden; clear: both">-->
+        <!--<Dustbin></Dustbin>-->
+        <!--</div>-->
+        <!--<div style="overflow: hidden; clear: both">-->
+        <!--<Box @click="mouseEvent" name="Glass"/>-->
+        <!--<Box @mouseenter="mouseEvent" @mouseleave="mouseEvent" name="Banana"/>-->
+        <!--<Box name="Paper"/>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</template>-->
       </v-card-text>
     </v-card>
+
   </div>
 </template>
 
 <script>
-  import draggable from "vuedraggable"
-  import dragdropslot from "./Navbar-tree-drop.vue"
-  import Dustbin from './Dustbin'
-  import Box from './Box'
+
+  import DragDropSlot from "./Navbar-tree-drop.vue"
+  import Dustbin from './dnd_exmple1/Dustbin'
+  import Box from './dnd_exmple1/Box'
   import {DragDropContext} from 'vue-react-dnd'
   import HTML5Backend from 'react-dnd-html5-backend'
+  import {mapState, mapGetters, mapActions} from 'vuex'
 
   export default {
-    components: {draggable, dragdropslot, Dustbin, Box},
+
+    components: {DragDropSlot, Dustbin, Box},
 
     mixins: [DragDropContext(HTML5Backend)],
     data() {
       return {
-        items: [
-          {
-            id: 1,
-            parent: null,
-            name: "Vuetify Human Resources",
-            children: [
-              {
-                id: 11,
-                parent: 1,
-                name: "Core team",
-                children: [
-                  {
-                    id: 111,
-                    parent: 11,
-                    name: "John"
-                  },
-                  {
-                    id: 112,
-                    parent: 11,
-                    name: "Kael"
-                  },
-
-                ],
-
-              },
-              {
-                id: 12,
-                parent: 1,
-                name: "Administrators",
-                children: [
-                  {
-                    id: 121,
-                    parent: 12,
-                    name: "Ranee"
-                  },
-                  {
-                    id: 122,
-                    parent: 12,
-                    name: "Rachel"
-                  }
-                ]
-              },
-
-            ]
-          }
-        ],
         open: [1, 2],
         search: null,
         caseSensitive: false,
-        over: null
+        over: null,
+        isMouseEnter: false
       };
     },
+
     methods: {
-      setEvent() {
-      }
-      ,
+
       drag(dragging) {
         this.dragging = dragging;
       }
       ,
       enter(dragging, target) {
         // this.expanded.push(target.id);
-        console.log("target.id:",target.id)
-        console.log("target",target)
+        console.log("target.id:", target.id)
+        console.log("target", target)
       }
       ,
       leave(dragging, target) {
@@ -157,6 +138,7 @@
         // if (target.id !== parent.id) {
         //   this.over = {id: target.id, mode: "append"};
         // }
+        console.log("hover", (Math.random() * 100) + 1)
       }
       ,
       drop(dragging, target) {
@@ -195,28 +177,57 @@
         }
         this.over = null;
         */
-       }
-      ,
-      findParent(id){
-        console.log("target.id:",id)
-        // while true:
-        //   null
-        const root = item[0].children
-        const L = root.length
-        for(let i=0;i<L;i++){
-          console.log(`len${L}-${i}`,"drop:",root[i])
-        }
       }
       ,
+      findParent(id) {
+        console.log("target.id:", id)
 
+        // const root = item[0].children
+        // const L = root.length
+        // for (let i = 0; i < L; i++) {
+        //   console.log(`len${L}-${i}`, "drop:", root[i])
+        // }
+      }
+      ,
+      setEvents() {
+      }
+      ,
+      mouseEvent(isEnter) {
+        if (isEnter === true) {
+
+          console.log("enter", (Math.random() * 100) + 1)
+
+        }
+
+        else
+          console.log("leave", (Math.random() * 100) + 1)
+        this.isMouseEnter = isEnter
+      },
+      itemClick() {
+        console.log("item click")
+      },
+      onAddBtnClick(item) {
+        console.log(item)
+      },
+      onDelBtnClick(item) {
+        console.log(item)
+      },
     },
 
     computed: {
+      ...mapState(['items']),
       filter() {
+
         return this.caseSensitive
           ? (item, search, textKey) => item[textKey].indexOf(search) > -1
           : undefined;
+
       }
+    },
+
+    mounted() {
+
+      this.setEvents();
     }
   };
 </script>
@@ -228,6 +239,24 @@
     overflow: auto;
     box-sizing: border-box;
   }
+
+  v-icon {
+
+    padding-right: 0
+  }
+
+  .v-treeview-node__content .v-btn {
+    display: none;
+  }
+
+  .v-treeview-node__content:hover .v-btn {
+    display: inherit;
+  }
+  .v-treeview-node__content:hover .v-btn:hover {
+    color: red;
+  }
+
+
 </style>
 
 

@@ -12,19 +12,16 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 Vue.use(Vuetify, {
   iconfont: 'md',
 })
-// VueDraggable
-// import VueDraggable from 'vue-draggable'
-// Vue.use(VueDraggable)
 
+// vuex步骤2. 映射
+import store from './store/store.js'
 Vue.config.productionTip = false
+
 /* eslint-disable */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
 })
-
-// vue.proper = (msg)=>{
-//     console.log(msg)
-//   }
