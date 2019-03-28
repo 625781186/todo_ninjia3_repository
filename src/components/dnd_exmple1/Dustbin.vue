@@ -21,7 +21,7 @@ export default {
       return this.canDrop && this.isOver
     },
     text () {
-      return this.isActive ? 'Release to drop' : 'Drag a box here'
+      return this.isActive ? 'Release to dg_drop' : 'Drag a box here'
     }
   },
   dropTarget: {
@@ -29,7 +29,7 @@ export default {
       return ItemsTypes.BOX
     },
     specs: {
-      drop () {
+      dg_drop () {
         return { name: 'Dustbin' }
       }
     },

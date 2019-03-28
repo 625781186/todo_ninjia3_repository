@@ -29,20 +29,18 @@
           hoverable
           open-all
         >
-
           /*tree item组*/
           <template slot="label" slot-scope="{ item }">
-
             <DragDropSlot
               :class="['tree-item', (over && over.id === item.id ? over.mode : '')]"
               :key="item.id"
               :item="item"
-              @drag="drag"
-              @enter="enter"
-              @leave="leave"
-              @hover="hover"
-              @drop="drop"
-              @click.native="itemClick"
+              @drag="dg_drag"
+              @enter="dg_enter"
+              @leave="dg_leave"
+              @hover="dg_hover"
+              @drop="dg_drop"
+              @click.native="onItemClick"
               @mouseenter.native="mouseEvent(isEnter=true)"
               @mouseleave.native="mouseEvent(isEnter=false)"
             >
@@ -53,43 +51,56 @@
           </template>
           /*后置按钮组*/
           <template slot="prepend" slot-scope="{ item }">
-            <!--<v-btn fab small-->
-            <!--slot="append"-->
-            <!--@click.stop="onAddBtnClick(item)">-->
-            <!--<v-icon >add</v-icon>-->
-            <!--</v-btn>-->
+            <!--<v-btn fab small
+            slot="append"
+            @click.stop="onAddBtnClick(item)">
+            <v-icon >add</v-icon>
+            </v-btn>
 
-            <!--<v-btn fab small>-->
-            <!--<v-icon>delete</v-icon>-->
-            <!--</v-btn>-->
-            <v-btn-toggle v-model="toggle_none">
-              <v-btn active-class=""  @click.stop="onAddBtnClick(item)">
+            <v-btn fab small>
+            <v-icon>delete</v-icon>
+            </v-btn>-->
+            <v-btn-toggle>
+              <v-btn active-class="" @click.stop="onAddBtnClick(item)">
                 <v-icon>add</v-icon>
               </v-btn>
-              <v-btn active-class=""  @click.stop="onDelBtnClick(item)">
-                <v-icon >delete</v-icon>
+              <v-btn active-class="" @click.stop="onDelBtnClick(item)">
+                <v-icon>delete</v-icon>
               </v-btn>
-
             </v-btn-toggle>
           </template>
         </v-treeview>
-
-        <!--/*BOX*/-->
-        <!--<template>-->
-        <!--<div>-->
-        <!--<div style="overflow: hidden; clear: both">-->
-        <!--<Dustbin></Dustbin>-->
-        <!--</div>-->
-        <!--<div style="overflow: hidden; clear: both">-->
-        <!--<Box @click="mouseEvent" name="Glass"/>-->
-        <!--<Box @mouseenter="mouseEvent" @mouseleave="mouseEvent" name="Banana"/>-->
-        <!--<Box name="Paper"/>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</template>-->
+        <!-- /*BOX*/
+        <template>
+        <div>
+        <div style="overflow: hidden; clear: both">
+        <Dustbin></Dustbin>
+        </div>
+        <div style="overflow: hidden; clear: both">
+        <Box @click="mouseEvent" name="Glass"/>
+        <Box @mouseenter="mouseEvent" @mouseleave="mouseEvent" name="Banana"/>
+        <Box name="Paper"/>
+        </div>
+        </div>
+     </template>-->
       </v-card-text>
     </v-card>
-
+    <template>
+      <v-layout row justify-center>
+        <v-dialog v-model="dialog" persistent max-width="290">
+          <v-card>
+            <v-card-title class="headline">Delete Artcle?</v-card-title>
+            <v-card-text>删除的文章会在垃圾桶 , 保留7天.
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" flat @click="onDelBtnClick(0)">Disagree</v-btn>
+              <v-btn color="green darken-1" flat @click="onDelBtnClick(1)">Agree</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-layout>
+    </template>
   </div>
 </template>
 
@@ -110,30 +121,36 @@
     data() {
       return {
         open: [1, 2],
+        //
         search: null,
         caseSensitive: false,
+        //
         over: null,
-        isMouseEnter: false
+        //
+        isMouseEnter: false,
+        //
+        dialog: false,
+        cItem: null,
       };
     },
 
     methods: {
 
-      drag(dragging) {
+      dg_drag(dragging) {
         this.dragging = dragging;
       }
       ,
-      enter(dragging, target) {
+      dg_enter(dragging, target) {
         // this.expanded.push(target.id);
-        console.log("target.id:", target.id)
+          console.log("target.id:", target.id)
         console.log("target", target)
       }
       ,
-      leave(dragging, target) {
+      dg_leave(dragging, target) {
         this.over = null;
       }
       ,
-      hover(dragging, target) {
+      dg_hover(dragging, target) {
         // let parent = this.findParent(dragging.id, this.tree);
         // if (target.id !== parent.id) {
         //   this.over = {id: target.id, mode: "append"};
@@ -141,7 +158,7 @@
         console.log("hover", (Math.random() * 100) + 1)
       }
       ,
-      drop(dragging, target) {
+      dg_drop(dragging, target) {
         this.findParent(target.id)
         /*
         let parent = this.findParent(dragging.id, this.tree);
@@ -181,53 +198,65 @@
       ,
       findParent(id) {
         console.log("target.id:", id)
-
         // const root = item[0].children
         // const L = root.length
         // for (let i = 0; i < L; i++) {
-        //   console.log(`len${L}-${i}`, "drop:", root[i])
+        //   console.log(`len${L}-${i}`, "dg_drop:", root[i])
         // }
-      }
-      ,
-      setEvents() {
       }
       ,
       mouseEvent(isEnter) {
         if (isEnter === true) {
-
           console.log("enter", (Math.random() * 100) + 1)
-
         }
-
         else
           console.log("leave", (Math.random() * 100) + 1)
         this.isMouseEnter = isEnter
-      },
-      itemClick() {
+      }
+      ,
+      onItemClick() {
         console.log("item click")
       },
       onAddBtnClick(item) {
         console.log(item)
       },
       onDelBtnClick(item) {
-        console.log(item)
+        if (item === 0) {
+          this.dialog = false
+
+          console.log("cancel")
+        }
+        else if (item === 1) {
+          this.dialog = false
+          if (this.cItem.parent != null) {
+            this.cItem.parent.pop(this.cItem)
+          }
+          console.log("delete")
+        }
+        else {
+          this.dialog = true
+          console.log(item)
+          this.cItem = item
+        }
       },
     },
 
     computed: {
+      // vuex 映射属性
       ...mapState(['items']),
+      // ...mapGetters(['getItems']),
+      // 普通方法
       filter() {
-
-        return this.caseSensitive
-          ? (item, search, textKey) => item[textKey].indexOf(search) > -1
-          : undefined;
-
+        return undefined
+        // return this.caseSensitive
+        //   ? (item, search, textKey) => item[textKey].indexOf(search) > -1
+        //   : undefined;
       }
     },
 
     mounted() {
 
-      this.setEvents();
+      // this.items = this.$store.state.items
     }
   };
 </script>
@@ -240,11 +269,6 @@
     box-sizing: border-box;
   }
 
-  v-icon {
-
-    padding-right: 0
-  }
-
   .v-treeview-node__content .v-btn {
     display: none;
   }
@@ -252,6 +276,7 @@
   .v-treeview-node__content:hover .v-btn {
     display: inherit;
   }
+
   .v-treeview-node__content:hover .v-btn:hover {
     color: red;
   }

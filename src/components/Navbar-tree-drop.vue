@@ -34,11 +34,11 @@
           return this.item.allowDrag !== false && this.item.draggable !== false
         },
         beginDrag() {
-          this.$emit('drag', this.item)
+          this.$emit('dg_drag', this.item)
           return this.item
         },
         endDrag() {
-          this.$emit('drag', null)
+          this.$emit('dg_drag', null)
         }
       }
     },
@@ -52,12 +52,12 @@
           const target = this.item
           return target.allowDrop !== false && dragging.id !== target.id
         },
-        hover(monitor) {
+        dg_hover(monitor) {
           if (monitor.canDrop() && monitor.isOver({shallow: true})) {
             this.emitDropTargetEvent('hover', monitor)
           }
         },
-        drop(monitor) {
+        dg_drop(monitor) {
           this.emitDropTargetEvent('drop', monitor)
         }
       },
