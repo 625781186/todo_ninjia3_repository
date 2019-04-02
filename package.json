@@ -16,6 +16,7 @@
     "react-dnd-html5-backend": "^7.2.0",
     "sass-loader": "^7.1.0",
     "vue": "^2.5.2",
+    "vue-codemirror": "^4.0.6",
     "vue-react-dnd": "^1.1.0",
     "vue-router": "^3.0.1",
     "vue-tree-halower": "^1.8.0",
