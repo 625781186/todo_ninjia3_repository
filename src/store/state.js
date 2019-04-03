@@ -1,10 +1,8 @@
 /*
 状态对象模块
  */
-import items_ from "../components/Item.js"
-console.log(items_,typeof(items_))
+
 export default {
-  items:[items_],
 
   items: [
     {

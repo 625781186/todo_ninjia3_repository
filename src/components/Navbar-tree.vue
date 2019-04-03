@@ -4,7 +4,7 @@
     <v-card class="mx-auto" style="top:5px;">
 
       <v-sheet class="pa-3 primary lighten-2">
-        /*搜索目录框*/
+        <!--/*搜索目录框*/-->
         <v-text-field
           v-model="searchword"
           label="Search Company Directory"
@@ -15,7 +15,7 @@
           clearable
           clear-icon="close-circle-outline"
         ></v-text-field>
-        /*匹配大小写*/
+        <!--/*匹配大小写*/-->
         <v-checkbox v-model="caseSensitive" dark hide-details label="Case sensitive search"></v-checkbox>
 
       </v-sheet>
@@ -27,19 +27,6 @@
                 :draggable='true' :tpl="tpl" :halfcheck='true'
                 :multiple="true" />
 
-        <!-- /*BOX*/
-        <template>
-        <div>
-        <div style="overflow: hidden; clear: both">
-        <Dustbin></Dustbin>
-        </div>
-        <div style="overflow: hidden; clear: both">
-        <Box @click="mouseEvent" name="Glass"/>
-        <Box @mouseenter="mouseEvent" @mouseleave="mouseEvent" name="Banana"/>
-        <Box name="Paper"/>
-        </div>
-        </div>
-     </template>-->
       </v-card-text>
     </v-card>
     <!--Dialog-->
@@ -85,28 +72,23 @@
 
 <script>
 
-  import DragDropSlot from "./Navbar-tree-drop.vue"
-  import Dustbin from './dnd_exmple1/Dustbin'
-  import Box from './dnd_exmple1/Box'
-  import {DragDropContext} from 'vue-react-dnd'
-  import HTML5Backend from 'react-dnd-html5-backend'
   import {mapState, mapGetters, mapActions} from 'vuex'
 
   export default {
 
-    components: {DragDropSlot, Dustbin, Box},
+    components: {},
 
-    mixins: [DragDropContext(HTML5Backend)],
+    mixins: [],
     data() {
       return {
         open: [1, 2],
         //
         searchword: '',
         caseSensitive: false,
-        //
-        over: null,
-        //
-        isMouseEnter: false,
+        // //
+        // over: null,
+        // //
+        // isMouseEnter: false,
         //dialog
         dialog: false,
         cNodeInfo: {cNode: "", cParent: "", cIndex: ""},
@@ -150,6 +132,7 @@
 
     methods:
       {
+        // -------------node 与 按钮点击事件------------- ↓
         onAddBtnClick(item) {
           console.log(item)
         }
@@ -192,8 +175,8 @@
         nodechecked(node, v) {
           alert('that a node-check envent ...' + node.title + v)
         },
-
-                async asyncLoad1(node) {
+        // 异步载入1
+        async asyncLoad1(node) {
           const {checked = false} = node
           this.$set(node, 'loading', true)
           let pro = new Promise(resolve => {
@@ -205,7 +188,9 @@
             this.$refs.tree1.childCheckedHandle(node, checked)
           }
         },
+        // 异步载入2
         async asyncLoad2(node) {
+
           const {checked = false} = node
           this.$set(node, 'loading', true)
           let pro = await new Promise(resolve => {
@@ -220,7 +205,9 @@
             this.$refs.tree2.childCheckedHandle(node, checked)
           }
         },
-        // tpl (node, ctx, parent, index, props) {
+        // -------------node 与 按钮点击事件------------- ↑
+
+        // tpl (node, ctx, parent, index, props) item模板
         tpl(...args) {
           let {0: node, 2: parent, 3: index} = args
           let titleClass = node.selected ? 'node-title node-selected' : 'node-title'
@@ -248,10 +235,7 @@
         ,
         // onMouseup = {()=>{this.onNodeRelease(event,node)}}>
 
-        search() {
-          this.$refs.tree1.searchNodes(this.searchword)
-        },
-      // -------------Menu Function------------- ↓
+        // -------------Menu Function------------- ↓
         onNodePress(event, node) {
           if (event.button == 0) {
             console.log("左键")
@@ -299,8 +283,11 @@
           )
           console.log("menu")
         },
-      // -------------Menu Function------------- ↑
-
+        // -------------Menu Function------------- ↑
+        // 搜索文章
+        search() {
+          this.$refs.tree1.searchNodes(this.searchword)
+        },
       }
     ,
 

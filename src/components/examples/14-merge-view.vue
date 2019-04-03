@@ -5,7 +5,7 @@
         <span>CodeMirror Merge Example</span>
         <span>&nbsp;&nbsp;&nbsp;</span>
       </div>
-      <v-btn class="v-icon-button"
+      <v-btn icon class="v-icon-button"
                  target="_blank"
                  href="https://github.com/surmon-china/vue-codemirror/tree/master/examples/14-merge-view.vue">
         <v-icon>code</v-icon>
