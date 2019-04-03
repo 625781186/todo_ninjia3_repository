@@ -246,7 +246,7 @@
           // }
           else if (event.button == 2) {
             console.log("右键")
-            event.preventDefault()
+
             this.popMenu(event)
           }
 
@@ -268,7 +268,7 @@
           // }
         },
         popMenu(e) {
-          e.stopPropagation()
+          // e.stopPropagation()
           e.preventDefault()
           this.showMenu = false
           this.x = e.clientX
@@ -332,7 +332,6 @@
   .tree-node-el .v-btn {
     margin: 3px;
     display: none;
-
   }
 
   .tree-node-el:hover .v-btn {

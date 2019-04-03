@@ -1,24 +1,24 @@
 <template>
-  <md-card>
-    <md-card-actions>
-      <div class="md-subhead">
+  <v-card>
+    <v-card-actions>
+      <div class="v-subhead">
         <span>mode: {{ cmOption.mode }}</span>
         <span>&nbsp;&nbsp;&nbsp;</span>
         <span>theme: {{ cmOption.theme }}</span>
       </div>
-      <md-button class="md-icon-button"
+      <v-btn class="v-icon-btn"
                  target="_blank"
                  href="https://github.com/surmon-china/vue-codemirror/tree/master/examples/03-text-css.vue">
-        <md-icon>code</md-icon>
-      </md-button>
-    </md-card-actions>
-    <md-card-media>
+        <v-icon>code</v-icon>
+      </v-btn>
+    </v-card-actions>
+    <v-card-media>
       <div class="codemirror">
         <!-- codemirror -->
         <codemirror v-model="code" :options="cmOption"></codemirror>
       </div>
-    </md-card-media>
-  </md-card>
+    </v-card-media>
+  </v-card>
 </template>
 
 <script>
@@ -31,7 +31,7 @@
 
   // require active-line.js
   import'codemirror/addon/selection/active-line.js'
-  
+
   export default {
     data() {
 const code =

@@ -17,10 +17,15 @@
     </v-toolbar>
 
     <!-- Left Drawer -->
-    <v-navigation-drawer ref="drawer" app :width="navigation.width" v-model="navigation.shown"
-                         style="height:100%;overflow:hidden">
+    <v-navigation-drawer
+      app
+      ref="drawer"
+      :width="navigation.width"
+      v-model="navigation.shown"
+      style="height:100%;overflow:hidden">
       <!-- drawer toolbar -->
-      <v-toolbar color="red" grid-list-md text-xs-center fixed>
+      <v-toolbar id="drawer_header"
+        color="red" grid-list-md text-xs-center fixed>
         <v-flex xs6>
           <v-toolbar-title class="headline padding-bottom:0">
             <span>A</span>
@@ -69,7 +74,8 @@
         </v-tab-item>
       </v-tabs>
       <!-- drawer footer -->
-      <v-footer inset absolute color="red">
+      <v-footer id="drawer_footer"
+        inset absolute color="red">
         <v-btn fab small color="success">
           <v-icon>settings</v-icon>
         </v-btn>

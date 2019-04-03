@@ -1,5 +1,5 @@
 // https://eslint.org/docs/user-guide/configuring
-
+/* eslint-disable */
 module.exports = {
   root: true,
   parserOptions: {
@@ -19,6 +19,6 @@ module.exports = {
   rules: {
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    "vue/no-parsing-error": [2, {" x-invalid-end-tag": false }],
+
   }
 }
